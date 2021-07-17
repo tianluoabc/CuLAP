@@ -2,7 +2,7 @@
 
 ## CUDA Hungarian Single Device Solver
 
-Implementation of **O(n^3) Alternating Tree Variant** of Hungarian Algorithm on NVIDIA CUDA-enabled GPU.
+Implementation of <img src="https://render.githubusercontent.com/render/math?math=O(n^3)"> alternating tree variant of Hungarian Algorithm on NVIDIA CUDA-enabled GPU.
 
 This implementation solves a batch of **k** **Linear Assignment Problems (LAP)**, each with *nxn* matrix of single floating point cost values. At optimality, the algorithm produces an assignment with **minimum** cost. Further, The API calls can be used to query optimal primal and dual costs, optimal assignment vector, and optimal row/column dual vectors for each subproblem in the batch.
 
