@@ -4,7 +4,7 @@
 *
 *      Article reference:
 *	   Date, Ketan, and Rakesh Nagi. "GPU-accelerated Hungarian algorithms for the Linear Assignment Problem." Parallel Computing 57 (2016): 52-72.
-*	   
+*
 */
 
 #include "culap.h"
@@ -417,12 +417,11 @@ float CuLAP::getDualObjectiveValue(int spId) {
 	try{
 		return h_obj_val_dual[spId];
 	}
-	
+
 	catch (...) {
 		std::cerr << "Cannot access dual objective array index " << spId << std::endl;
 
 		throw;
 	}
-	
-}
 
+}
