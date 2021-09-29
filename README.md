@@ -1,17 +1,15 @@
-# CuHungarianSingleDevice
-Implementation of ***O(n^3) Alternating Tree Variant*** of Hungarian Algorithm on NVIDIA CUDA-enabled GPU.
+<img src="./static/logo2.png" alt="drawing" width="200"/>
 
-This implementation solves a batch of ***k*** **Linear Assignment Problems (LAP)**, each with ***nxn*** matrix of single floating point cost values. At optimality, the algorithm produces an assignment with ***minimum*** cost.
+## CUDA Hungarian Single Device Solver
 
-The API can be used to query optimal primal and dual costs, optimal assignment vector, and optimal row/column dual vectors for each subproblem in the batch.
+Implementation of <img src="https://render.githubusercontent.com/render/math?math=O(n^3)"> alternating tree variant of Hungarian Algorithm on NVIDIA CUDA-enabled GPU.
 
-Following parameters in ***d_vars.h*** can be used to tune the performance of algorithm:
+This implementation solves a batch of **k** **Linear Assignment Problems (LAP)**, each with *nxn* matrix of single floating point cost values. At optimality, the algorithm produces an assignment with **minimum** cost. Further, The API calls can be used to query optimal primal and dual costs, optimal assignment vector, and optimal row/column dual vectors for each subproblem in the batch.
 
-1. EPSILON: This parameter controls the tolerance on the floating point precision. Setting this too small will result in increased solution time because the algorithm will search for precise solutions. Setting it too high may cause some inaccuracies.
+- [Documentation](In-Development)
+- [Setup and Installation](void)
 
-2. BLOCKDIMX, BLOCKDIMY, BLOCKDIMZ: These parameters control threads_per_block to be used along the given dimension. Set these according to the device specifications and occupancy calculation.
-
-***This library is licensed under Apache License 2.0. Please cite our paper, if this library helps you in your research.***
+**This library is licensed under Apache License 2.0. Please cite our paper, if this library helps you in your research.**
 
 - Harvard citation style
 
@@ -31,4 +29,4 @@ Following parameters in ***d_vars.h*** can be used to tune the performance of al
 }
 ```
 
-The paper is available online on [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S016781911630045X).
+- The paper is available online on [ScienceDirect](https://www.sciencedirect.com/science/article/abs/pii/S016781911630045X).

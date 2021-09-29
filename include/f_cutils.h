@@ -13,9 +13,9 @@
 #include <random>
 #include <cuda.h>
 #include <thrust/scan.h>
+#include "d_vars.h"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "d_vars.h"
 
 #ifndef F_CUTILS_H_
 #define F_CUTILS_H_

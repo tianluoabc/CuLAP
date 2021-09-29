@@ -13,10 +13,14 @@
 #include <sstream>
 #include <random>
 #include <omp.h>
-#include "d_structs.h"
-#include "d_vars.h"
-#include "f_cutils.h"
-#include "culap.h"
+#include "../CuLAP/culap.h"
+
+#define PROBLEMSIZE 1000 // Number of rows/columns
+#define BATCHSIZE 10 // Number of problems in the batch
+#define COSTRANGE 1000
+#define PROBLEMCOUNT 1
+#define REPETITIONS 1
+#define DEVICECOUNT 1
 
 int main(int argc, char **argv) {
 
@@ -26,7 +30,7 @@ int main(int argc, char **argv) {
 	int repetitions = REPETITIONS;
 	int batchsize = BATCHSIZE;
 
-	int devid = 0;
+	int dev_id = 0;
 
 	cudaSetDevice(devid);
 	cudaDeviceSynchronize();
@@ -44,7 +48,7 @@ int main(int argc, char **argv) {
 			float start = omp_get_wtime();
 
 			// Create an instance of CuLAP using problem size, number of subproblems, and device id.
-			CuLAP lpx(problemsize, batchsize, devid);
+			CuLAP lpx(problemsize, batchsize, dev_id);
 
 			// Solve LAP(s) for given cost matrix
 			lpx.solve(h_cost);
@@ -55,40 +59,32 @@ int main(int argc, char **argv) {
 
 			// Use getPrimalObjectiveValue and getDualObjectiveValue APIs to get primal and dual objectives. At optimality both values should match.
 			for (int k = 0; k < batchsize; k++) {
-
 				printf("%d:%d:%d:%f:%f:%f\n", j, i, k, lpx.getPrimalObjectiveValue(k), lpx.getDualObjectiveValue(k), total_time);
 
+				// Use getAssignmentVector API to get the optimal row assignments for specified problem id.
+				int *assignment_sp1 = new int[problemsize];
+				lpx.getAssignmentVector(assignment_sp1, k);
+				std::cout << "\nPrinting assignment vector for subproblem "<<k<<" in this batch"<< std::endl;
+
+				for (int z = 0; z < problemsize; z++) {
+					std::cout << z << "\t" << assignment_sp1[z] << std::endl;
+				}
+
+				delete[] assignment_sp1;
+
+				// Use getRowDualVector and getColDualVector API to get the optimal row duals and column duals for specified problem id.
+				float *row_dual_sp1 = new float[problemsize];
+				lpx.getRowDualVector(row_dual_sp1, k);
+
+				std::cout << "\nPrinting row dual vector for subproblem "<<k<<" in this batch"<< std::endl;
+				for (int z = 0; z < problemsize; z++) {
+					std::cout << z << "\t" << row_dual_sp1[z] << std::endl;
+				}
+				delete[] row_dual_sp1;
 			}
-
-//			Use getAssignmentVector API to get the optimal row assignments for specified problem id.
-//			Example is shown below.
-
-//			int *assignment_sp1 = new int[problemsize];
-//			lpx.getAssignmentVector(assignment_sp1, 15);
-//
-//			std::cout << "\nPrinting assignment vector for subproblem 1" << std::endl;
-//			for (int z = 0; z < problemsize; z++) {
-//				std::cout << z << "\t" << assignment_sp1[z] << std::endl;
-//			}
-//
-//			delete[] assignment_sp1;
-
-//			Use getRowDualVector and getColDualVector API to get the optimal row duals and column duals for specified problem id.
-//			Example is shown below.
-
-//			float *row_dual_sp1 = new float[problemsize];
-//			lpx.getRowDualVector(row_dual_sp1, 15);
-//
-//			std::cout << "\nPrinting row dual vector for subproblem 1" << std::endl;
-//			for (int z = 0; z < problemsize; z++) {
-//				std::cout << z << "\t" << row_dual_sp1[z] << std::endl;
-//			}
-//
-//			delete[] row_dual_sp1;
 		}
 	}
 
 	delete[] h_cost;
-
 	return 0;
 }
