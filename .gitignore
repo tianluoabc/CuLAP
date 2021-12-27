@@ -4,8 +4,9 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 *.vcxproj
 *.sln
-
-
+o/**
+log/**
+*.exe
 
 # User-specific files
 *.rsuser
