@@ -4,9 +4,11 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 *.vcxproj
 *.sln
-
-
-
+build/**
+o/**
+cuLAP
+*.d
+*.o
 # User-specific files
 *.rsuser
 *.suo

@@ -2,8 +2,8 @@ NVCC = nvcc
 TARGET_EXEC ?= a.out
 
 BUILD_DIR ?= ./build
-SRC_DIRS = 
-INC_DIRS ?= ./include
+SRC_DIRS = ./src/
+INCL_DIRS ?=
 EXE_DIR ?= $(BUILD_DIR)/exec
 
 SRCS := $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s' -or -name '*.cu')
@@ -15,9 +15,9 @@ DEPS := $(OBJS:.o=.d)
 #INCL_DIRS := $(shell find $(INC_DIRS) -type d) ./include $(FREESTAND_DIR)/include 
 INCL_DIRS := #./include $(FREESTAND_DIR)/include 
 INC_FLAGS := $(addprefix -I,$(INCL_DIRS))
-# LDFLAGS := lcudart
-CPPFLAGS ?= $(INC_FLAGS) -Wall -pthread -MMD -MP -shared -fPIC -std=c++14 -O3
-CUDAFLAGS = $(INC_FLAGS) -std=c++14 -O3 -arch=sm_75 -L /usr/local/cuda/lib64 -lcudart
+LDFLAGS := -lcudart -lgomp
+CPPFLAGS ?= $(INC_FLAGS) -Wall -pthread -std=c++14 -MMD -MP -g -O3 -I /usr/local/cuda/include -L /usr/local/cuda/lib64 -lcudart -lgomp -w
+CUDAFLAGS = $(INC_FLAGS) -g -std=c++14 -O3 -arch=sm_75 -L /usr/local/cuda/lib64 -w
 
 
 all: objs exes
@@ -28,7 +28,7 @@ exes: $(EXES)
 
 $(BUILD_DIR)/exe/%.exe: $(BUILD_DIR)/obj/%.o
 	$(MKDIR_P) $(dir $@)
-	$(NVCC) $< -o $@ $(LDFLAGS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< -o $@
 
 # assembly
 $(BUILD_DIR)/obj/%.s.o: %.s

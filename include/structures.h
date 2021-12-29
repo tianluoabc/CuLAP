@@ -1,55 +1,57 @@
 /*
- * Created by Ketan Date
+ * Structures.h
+ *
+ *  Created on: Oct 30, 2014
+ *      Author: ketandat
  */
 
-#ifndef _STRUCTURES_H
-#define _STRUCTURES_H
+#ifndef STRUCTURES_H_
+#define STRUCTURES_H_
 
 struct Array
 {
-	int size;
-	short *elements;
+	long size;
+	int *elements;
 };
 
 struct Matrix
 {
 	int rowsize;
 	int colsize;
-	int *elements;
+	double *elements;
+	double *row_duals;
+	double *col_duals;
 };
 
 struct Vertices
 {
-	short *row_assignments;
-	short *col_assignments;
+	int *row_assignments;
+	int *col_assignments;
 	int *row_covers;
-	int *col_covers;	
+	int *col_covers;
 };
 
-struct Edges
-{
-	int *costs;
-	char *masks;
-};
 
 struct CompactEdges
 {
-	short *neighbors;
-	int *ptrs;
-	short *is_visited;
+	int *neighbors;
+	long *ptrs;
 };
 
 struct Predicates
 {
-	int size;
+	long size;
 	bool *predicates;
-	int *addresses;
+	long *addresses;
 };
 
 struct VertexData
 {
-	short *parents;
-	short *children;
+	int *parents;
+	int *children;
+	int *is_visited;
+	double *slack;
 };
 
-#endif
+
+#endif /* STRUCTURES_H_ */

@@ -1,22 +1,23 @@
 /*
- * Created by Ketan Date
+ * variables.h
+ *
+ *  Created on: Oct 30, 2014
+ *      Author: ketandat
  */
 
-#ifndef _VARIABLES_H
-#define _VARIABLES_H
-
-#include "structures.h"
-
-//#define LIGHT
+#ifndef VARIABLES_H_
+#define VARIABLES_H_
 
 #define MAX_GRIDSIZE 65535
 #define INF 1000001
+#define EPSILON 0.00001
 
 #define PROBLEMSIZE 5000
-#define COSTRANGE 100000
-#define PROBLEMCOUNT 3
-#define REPETITIONS 5
-#define INPUTFILE "Problemset/5000.txt"
+#define COSTRANGE 5000
+#define PROBLEMCOUNT 1
+#define REPETITIONS 10
+#define DEVICE_COUNT 2
+#define INPUTFILE "input1.txt"
 
 #define SEED 24071987
 
@@ -33,14 +34,7 @@
 #define VISITED 2
 #define REVERSE 3
 #define AUGMENT 4
+#define MODIFIED 5
 
-extern double memory;
-extern int N;
-extern int N2;
-extern int M;
-extern Matrix h_costs, h_red_costs;
-extern Vertices d_vertices;
-extern Edges d_edges;
-extern CompactEdges d_edges_csr, d_edges_csc;
 
-#endif
+#endif /* VARIABLES_H_ */
