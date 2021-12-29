@@ -4,11 +4,13 @@
  *  Created on: Oct 30, 2014
  *      Author: ketandat
  */
+#pragma once
 
 #include <omp.h>
 #include "f_culap.h"
-#include "structures.h"
-#include "variables.h"
+#include "d_structs.h"
+#include "d_vars.h"
+#include "math.h"
 
 #ifndef CUALP_H_
 #define CUALP_H_
@@ -39,7 +41,7 @@ class CuLAP {
 	VertexData d_row_data_dev, d_col_data_dev;
 
 public:
-	CuLAP(int _size, int _spcount, int _devid, bool _is_dynamic, int *_stepcounts);
+	CuLAP(int _size, int _spcount, int _devid, bool _is_dynamic);
 	virtual ~CuLAP();
 
 	int solve(double *d_cost_matrix, int *d_row_assignments, double *d_row_duals, double *d_col_duals, double *d_obj_val);

@@ -440,7 +440,7 @@ __global__ void kernel_rowReduction(double *d_costs, double *d_row_duals, double
 
 	int spid = blockIdx.y * blockDim.y + threadIdx.y;
 	int rowid = blockIdx.x * blockDim.x + threadIdx.x;
-	double min = INF;
+	double min = BIG_NUMBER;
 
 	if (spid < SP && rowid < N)
 	{
@@ -467,7 +467,7 @@ __global__ void kernel_columnReduction(double *d_costs, double *d_row_duals, dou
 	int spid = blockIdx.y * blockDim.y + threadIdx.y;
 	int colid = blockIdx.x * blockDim.x + threadIdx.x;
 
-	double min = INF;
+	double min = BIG_NUMBER;
 
 	if (spid < SP && colid < N)
 	{
@@ -498,7 +498,7 @@ __global__ void kernel_dynamicUpdate(int *d_row_assignments, int *d_col_assignme
 
 	int ROWID = spid * N + rowid;
 
-	double min = INF;
+	double min = BIG_NUMBER;
 
 	if (spid < SP && rowid < N)
 	{
@@ -841,7 +841,7 @@ __global__ void kernel_computeUncoveredMinima1(double *d_min_val, double *d_cost
 
 	int COLID = spid * N + colid;
 
-	double min = INF;
+	double min = BIG_NUMBER;
 
 	if (spid < SP && colid < N)
 	{
@@ -871,7 +871,7 @@ __global__ void kernel_computeUncoveredMinima2(double *d_sp_min, double *d_min_v
 
 	int spid = blockIdx.x * blockDim.x + threadIdx.x;
 
-	double min = INF;
+	double min = BIG_NUMBER;
 
 	if (spid < SP)
 	{

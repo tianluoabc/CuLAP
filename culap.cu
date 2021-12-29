@@ -2,12 +2,12 @@
  * LinearAssignmentProblem.cpp
  *
  *  Created on: Oct 30, 2014
- *      Author: ketandat
+ *      Author: ketandate
  */
 
 #include "include/culap.h"
 
-CuLAP::CuLAP(int _size, int _spcount, int _devid, bool _is_dynamic, int *_stepcounts)
+CuLAP::CuLAP(int _size, int _spcount, int _devid, bool _is_dynamic)
 {
 
 	N = _size;
@@ -25,9 +25,7 @@ CuLAP::CuLAP(int _size, int _spcount, int _devid, bool _is_dynamic, int *_stepco
 
 	initial_assignment_count = 0;
 
-	stepcounts = _stepcounts;
-
-	//	stepcounts = new int[7];
+	stepcounts = new int[7];
 	steptimes = new double[9];
 
 	d_obj_val_dev = 0;
@@ -36,7 +34,7 @@ CuLAP::CuLAP(int _size, int _spcount, int _devid, bool _is_dynamic, int *_stepco
 CuLAP::~CuLAP()
 {
 
-	//	delete[] stepcounts;
+	delete[] stepcounts;
 	delete[] steptimes;
 }
 
@@ -191,7 +189,8 @@ int CuLAP::hungarianStep1(bool count_time)
 
 	double start = omp_get_wtime();
 
-	computeInitialAssignments(d_costs_dev, d_vertices_dev, SP, N, devid);
+	// computeInitialAssignments(d_costs_dev, d_vertices_dev, SP, N, devid);
+	VogelInitialAssignments(d_costs_dev, d_vertices_dev, SP, N, devid);
 
 	double mid = omp_get_wtime();
 
