@@ -5,7 +5,7 @@
 *.vcxproj
 *.sln
 build/**
-o/**
+o/*.o
 cuLAP
 *.d
 *.o
@@ -471,3 +471,4 @@ MigrationBackup/
 .ionide/
 
 #
+o/main.o
