@@ -23,6 +23,7 @@
 
 #define BLOCKDIMX 16
 #define BLOCKDIMY 8
+#define BLOCKDIMZ 8
 
 #define NORMAL 'N'
 #define PRIME 'P'

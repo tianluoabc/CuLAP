@@ -3,7 +3,8 @@
  */
 
 #include "include/helper_utils.h"
-#include <cmath>
+
+CRandomSFMT randomGenerator(SEED);
 
 // Helper function for printing device errors.
 void cudaSafeCall(cudaError_t error, const char *message)
@@ -73,13 +74,31 @@ void calculateRectangularDims(dim3 &blocks_per_grid, dim3 &threads_per_block, in
 	blocks_per_grid.y = valuey;
 }
 
+// Function for calculating grid and block dimensions from the given input size for cubic grid.
+void calculateCubicDims(dim3 &blocks_per_grid, dim3 &threads_per_block, int &total_blocks, int xsize, int ysize, int zsize)
+{
+
+	threads_per_block.x = BLOCKDIMX;
+	threads_per_block.y = BLOCKDIMY;
+	threads_per_block.z = BLOCKDIMZ;
+
+	int valuex = (int)ceil((double)(xsize) / BLOCKDIMX);
+	int valuey = (int)ceil((double)(ysize) / BLOCKDIMY);
+	int valuez = (int)ceil((double)(zsize) / BLOCKDIMZ);
+
+	total_blocks = valuex * valuey * valuez;
+	blocks_per_grid.x = valuex;
+	blocks_per_grid.y = valuey;
+	blocks_per_grid.z = valuez;
+}
+
 // Function for printing the output log.
 void printLog(int prno, int repetition, int numprocs, int numdev, int costrange, long obj_val, int init_assignments, double total_time, int *stepcounts, double *steptimes, const char *logpath, int N)
 {
 	std::ofstream logfile(logpath, std::ios_base::app);
 
-	logfile << prno << "\t" << numprocs << "\t" << numdev << "\t" << N << "\t[0, " << costrange << "]\t" << obj_val << "\t" << init_assignments << "\t" << stepcounts[0] << "\t" << stepcounts[1] << "\t" << stepcounts[2] << "\t" << stepcounts[3] << "\t" << stepcounts[4] << "\t" << stepcounts[5] << "\t" << stepcounts[6] << "\t" << steptimes[0] << "\t" << steptimes[1] << "\t" << steptimes[2] << "\t"
-			<< steptimes[3] << "\t" << steptimes[4] << "\t" << steptimes[5] << "\t" << steptimes[6] << "\t" << steptimes[7] << "\t" << steptimes[8] << "\t" << total_time << std::endl;
+	logfile << prno << "\t" << numprocs << "\t" << numdev << "\t" << N << "\t[0, " << costrange << "]\t" << obj_val << "\t" << init_assignments << "\t" << stepcounts[0] << "\t" << stepcounts[1] << "\t" << stepcounts[2] << "\t" << stepcounts[3] << "\t" << stepcounts[4] << "\t" << stepcounts[5] << "\t" << stepcounts[6] << "\t" << steptimes[0] << "\t" << steptimes[1] << "\t" << steptimes[2] << "\t" << steptimes[3] << "\t" << steptimes[4] << "\t" << steptimes[5] << "\t" << steptimes[6] << "\t"
+			<< steptimes[7] << "\t" << steptimes[8] << "\t" << total_time << std::endl;
 
 	logfile.close();
 }
@@ -208,14 +227,12 @@ bool reduceOR(bool *array, int size)
 	return val;
 }
 
-void printDebugArray(int *d_array, int size, const char *name, unsigned int devid)
+void printDebugArray(int *d_array, int size, const char *name)
 {
-
-	cudaSetDevice(devid);
 
 	int *h_array = new int[size];
 
-	std::cout << name << devid << std::endl;
+	std::cout << name << std::endl;
 	cudaMemcpyAsync(h_array, d_array, size * sizeof(int), cudaMemcpyDeviceToHost);
 	for (int i = 0; i < size; i++)
 	{
@@ -226,14 +243,12 @@ void printDebugArray(int *d_array, int size, const char *name, unsigned int devi
 	delete[] h_array;
 }
 
-void printDebugArray(long *d_array, int size, const char *name, unsigned int devid)
+void printDebugArray(long *d_array, int size, const char *name)
 {
-
-	cudaSetDevice(devid);
 
 	long *h_array = new long[size];
 
-	std::cout << name << devid << std::endl;
+	std::cout << name << std::endl;
 	cudaMemcpyAsync(h_array, d_array, size * sizeof(long), cudaMemcpyDeviceToHost);
 	for (int i = 0; i < size; i++)
 	{
@@ -244,14 +259,12 @@ void printDebugArray(long *d_array, int size, const char *name, unsigned int dev
 	delete[] h_array;
 }
 
-void printDebugArray(double *d_array, int size, const char *name, unsigned int devid)
+void printDebugArray(double *d_array, int size, const char *name)
 {
-
-	cudaSetDevice(devid);
 
 	double *h_array = new double[size];
 
-	std::cout << name << devid << std::endl;
+	std::cout << name << std::endl;
 	cudaMemcpyAsync(h_array, d_array, size * sizeof(double), cudaMemcpyDeviceToHost);
 	for (int i = 0; i < size; i++)
 	{
@@ -316,22 +329,20 @@ void printHostArray(long *h_array, int size, const char *name)
 }
 
 // Function for generating problem with uniformly distributed integer costs between [0, COSTRANGE].
-void generateProblem(double *cost_matrix, int N, int costrange)
+void generateProblem(double *cost_matrix, int SP, int N, int costrange)
 {
-	// using namespace std;
-	long N2 = N * N;
-	std::default_random_engine generator1(12345);
-	std::uniform_int_distribution<int> distribution(0, costrange);
+
+	long N2 = SP * N * N;
 
 	for (long i = 0; i < N2; i++)
 	{
-		int val = distribution(generator1);
+		int val = randomGenerator.IRandomX(0, costrange);
 		cost_matrix[i] = (double)val;
 	}
 }
 
 // Function for reading specified input file.
-void readFile(double *cost_matrix, const char *filename)
+void readFile(double *cost_matrix, const char *filename, int spcount)
 {
 	std::string s = filename;
 	std::ifstream myfile(s.c_str());
@@ -347,7 +358,7 @@ void readFile(double *cost_matrix, const char *filename)
 		int N = 0;
 		myfile >> N;
 
-		long N2 = N * N;
+		long N2 = N * N * spcount;
 
 		for (long i = 0; i < N2; i++)
 		{

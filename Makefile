@@ -1,35 +1,25 @@
-all: sfmt.o functions_step_0.o functions_step_1.o functions_step_2.o functions_step_3.o functions_step_4.o functions_step_5.o helper_utils.o LinearAssignmentProblem.o main.o
-	g++ o/sfmt.o o/functions_step_0.o o/functions_step_1.o o/functions_step_2.o o/functions_step_3.o o/functions_step_4.o o/functions_step_5.o o/helper_utils.o o/LinearAssignmentProblem.o o/main.o -L/usr/local/cuda/lib64 -lcudart -lgomp -o cuLAP
+CUDAFLAGS = -arch=sm_75 -w -std=c++14 -O3 
 
-functions_step_0.o: functions_step_0.cu
-	nvcc -arch=sm_75 -c functions_step_0.cu -o o/functions_step_0.o
-
-functions_step_1.o: functions_step_1.cu
-	nvcc -arch=sm_75 -c functions_step_1.cu -o o/functions_step_1.o
-
-functions_step_2.o: functions_step_2.cu
-	nvcc -arch=sm_75 -c functions_step_2.cu -o o/functions_step_2.o
-
-functions_step_3.o: functions_step_3.cu
-	nvcc -arch=sm_75 -c functions_step_3.cu -o o/functions_step_3.o
-
-functions_step_4.o: functions_step_4.cu
-	nvcc -arch=sm_75 -c functions_step_4.cu -o o/functions_step_4.o
+all: sfmt.o f_culap.o culap.o helper_utils.o main.o
+	g++ o/sfmt.o o/f_culap.o o/culap.o o/helper_utils.o o/main.o -L/usr/local/cuda/lib64 -lcudart -lgomp -o cuLAP
 
 functions_step_5.o: functions_step_5.cu
-	nvcc -arch=sm_75 -c functions_step_5.cu -o o/functions_step_5.o
+	nvcc $(CUDAFLAGS) functions_step_5.cu -o o/functions_step_5.o
 
 helper_utils.o: helper_utils.cpp
 	g++ -I/usr/local/cuda/include -c helper_utils.cpp -o o/helper_utils.o
 
-LinearAssignmentProblem.o: LinearAssignmentProblem.cpp
-	g++ -I/usr/local/cuda/include -c LinearAssignmentProblem.cpp -o o/LinearAssignmentProblem.o
+culap.o: culap.cu
+	nvcc $(CUDAFLAGS) -c culap.cu -o o/culap.o
 
-main.o: src/main.cpp
-	g++ -I/usr/local/cuda/include -c src/main.cpp -o o/main.o
+f_culap.o: f_culap.cu
+	nvcc $(CUDAFLAGS) -c f_culap.cu -o o/f_culap.o
+
+main.o: src/main.cu
+	nvcc $(CUDAFLAGS) -c src/main.cu -o o/main.o
 
 sfmt.o: sfmt.cpp
 	g++ -I/usr/local/cuda/include -c sfmt.cpp -o o/sfmt.o
 
 clean:
-	rm -rf o/*.o
+	rm -rf o/*.o cuLAP

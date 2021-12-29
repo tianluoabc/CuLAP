@@ -19,8 +19,6 @@ struct Matrix
 	int rowsize;
 	int colsize;
 	double *elements;
-	double *row_duals;
-	double *col_duals;
 };
 
 struct Vertices
@@ -29,6 +27,8 @@ struct Vertices
 	int *col_assignments;
 	int *row_covers;
 	int *col_covers;
+	double *row_duals;
+	double *col_duals;
 };
 
 
@@ -50,7 +50,6 @@ struct VertexData
 	int *parents;
 	int *children;
 	int *is_visited;
-	double *slack;
 };
 
 
